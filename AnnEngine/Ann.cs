@@ -7,6 +7,7 @@ namespace AnnEngine {
     public class Ann {
         private readonly float[ ][ ][ ] _weights;
         private readonly float[ ] _biasWeights;
+        // TODO: make diff types of neurons
         private readonly Neuron[ ][ ] _neurons;
 
         private const float MIN_START_WEIGHT = -0.5f;
@@ -84,8 +85,8 @@ namespace AnnEngine {
                         ActivationFunction(_neurons[currentLevel][currentNeuron].Value);
                 }
             }
-            uint outputLevelIndex = (uint)_neurons.Length - 1;
-            float[] result = new float[_neurons[outputLevelIndex].Length];
+            uint outputLevelIndex = (uint) _neurons.Length - 1;
+            float[ ] result = new float[_neurons[outputLevelIndex].Length];
             for (uint i = 0; i < result.Length; i++) {
                 result[i] = _neurons[outputLevelIndex][i].Value;
             }
@@ -101,6 +102,20 @@ namespace AnnEngine {
                 error += (float) Math.Pow(idealResult[i] - result[i], 2);
             }
             error /= result.Length;
+            for (uint i = 0, outputLevelIndex = (uint) _neurons.Length - 1;
+                i < _neurons[outputLevelIndex].Length;
+                i++) {
+                _neurons[outputLevelIndex][i].Delta = (idealResult[i] - result[i]) * LearningFunction(result[i]);
+            }
+            for (uint i = (uint) _neurons.Length - 2, iInc = i + 1; i > 0; i--, iInc--) {
+                for (uint j = 0; j < _neurons[i].Length; j++) {
+                    _neurons[i][j].Delta = 0;
+                    for (uint k = 0; k < _neurons[iInc].Length; k++) {
+                        _neurons[i][j].Delta += _neurons[iInc][k].Delta * _weights[i][j][k];
+                    }
+                    _neurons[i][j].Delta *= LearningFunction(_neurons[i][j].Value);
+                }
+            }
             return new AnnResult(result, error);
         }
 
