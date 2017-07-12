@@ -7,7 +7,7 @@ namespace AnnEngine {
     public class Ann {
         private float[ ][ ][ ] _weights;
         private float[ ] _biasWeights;
-        
+
         private const float MIN_START_WEIGHT = -0.5f;
         private const float MAX_START_WEIGHT = 0.5f;
 
@@ -72,6 +72,18 @@ namespace AnnEngine {
                 values = newValues;
             }
             return values;
+        }
+
+        public AnnResult Learn(float[ ] input, float[ ]idealResult) {
+            // TODO: throw input.Length != input neurons count || idealResult.Length != output neurons count
+            float[ ] result = Run(input);
+            // Calculation the error
+            float error = 0;
+            for (uint i = 0; i < result.Length; i++) {
+                error += (float) Math.Pow(idealResult[i] - result[i], 2);
+            }
+            error /= result.Length;
+            return new AnnResult(result, error);
         }
 
         public static float Sigmoid(float x) => (float) (1f / (1f + Math.Exp(-x)));
