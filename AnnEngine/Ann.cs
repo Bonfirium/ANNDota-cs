@@ -6,7 +6,9 @@ using System.Security.Cryptography.X509Certificates;
 namespace AnnEngine {
     public class Ann {
         private readonly AnnEdge[ ][ ][ ] _edges;
+
         private readonly AnnEdge[ ][ ] _biasEdges;
+
         // TODO: make diff types of neurons
         private readonly Neuron[ ][ ] _neurons;
 
@@ -25,7 +27,7 @@ namespace AnnEngine {
             LearningSpeed = learningSpeed;
             Moment = moment;
             ActivationFunction = activationFunction ?? Sigmoid;
-            LearningFunction = learningFunction ?? SigmoidПроизводнаяУпрощённая;
+            LearningFunction = learningFunction ?? SigmoidDerivativeSimplified;
             HasBiasNeurons = useBiasNeurons;
             _edges = new AnnEdge[hiddenNeurons.Length + 1][ ][ ];
             _neurons = new Neuron[hiddenNeurons.Length + 2][ ];
@@ -141,8 +143,6 @@ namespace AnnEngine {
         }
 
         public static float Sigmoid(float x) => (float) (1f / (1f + Math.Exp(-x)));
-
-        // TODO: rename
-        public static float SigmoidПроизводнаяУпрощённая(float x) => (1 - x) * x;
+        public static float SigmoidDerivativeSimplified(float x) => (1 - x) * x;
     }
 }

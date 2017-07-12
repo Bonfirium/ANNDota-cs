@@ -38,7 +38,7 @@ namespace AnnLogicalOperators {
                         Utils.GetBit(i, 0).ToFloat( ),
                         Utils.GetBit(i, 1).ToFloat( ),
                         Utils.GetBit(i, 2).ToFloat( )
-                    }, new float[ ] { idealResultsFloat[i] });
+                    }, new[ ] { idealResultsFloat[i] });
                     Console.Write("\t" + (result.Result[0]).ToString(".0000"));
                     maxError = Math.Max(maxError, result.Error);
                 }
