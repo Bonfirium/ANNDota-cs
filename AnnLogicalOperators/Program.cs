@@ -8,7 +8,7 @@ namespace AnnLogicalOperators {
 
         public static void Main(string[ ] args) {
             bool[ ] idealResults = new bool[VARIABLES];
-            float[] idealResultsFloat = new float[VARIABLES];
+            float[ ] idealResultsFloat = new float[VARIABLES];
             for (uint i = 0; i < VARIABLES; i++) {
                 idealResults[i] = FunctionForLearning(
                     Utils.GetBit(i, 0),
@@ -31,18 +31,20 @@ namespace AnnLogicalOperators {
             Console.WriteLine("\n");
 
             Ann ann = new Ann(3, new[ ] { 4u, 4u }, 1, 0.4f, 0.2f);
-            float maxError = 0f;
-            for (uint i = 0; i < VARIABLES; i++) {
-                AnnResult result = ann.Learn(new[ ] {
-                    Utils.GetBit(i, 0).ToFloat( ),
-                    Utils.GetBit(i, 1).ToFloat( ),
-                    Utils.GetBit(i, 2).ToFloat( )
-                }, idealResultsFloat);
-                Console.Write("\t" + (result.Result[0]).ToString(".0000"));
-                maxError = Math.Max(maxError, result.Error);
+            for (uint test = 0; test < 100000; test++) {
+                float maxError = 0f;
+                for (uint i = 0; i < VARIABLES; i++) {
+                    AnnResult result = ann.Learn(new[ ] {
+                        Utils.GetBit(i, 0).ToFloat( ),
+                        Utils.GetBit(i, 1).ToFloat( ),
+                        Utils.GetBit(i, 2).ToFloat( )
+                    }, new float[ ] { idealResultsFloat[i] });
+                    Console.Write("\t" + (result.Result[0]).ToString(".0000"));
+                    maxError = Math.Max(maxError, result.Error);
+                }
+                Console.Write("\tERROR = " + (maxError * 100f).ToString("00.0000") + "%");
+                Console.WriteLine( );
             }
-            Console.Write("\tERROR = " + (maxError * 100f).ToString("00.0000") + "%");
-            Console.WriteLine( );
 
 #if DEBUG
             Console.Write("Press any key to close program");
