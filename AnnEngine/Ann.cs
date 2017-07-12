@@ -7,6 +7,9 @@ namespace AnnEngine {
     public class Ann {
         private float[ ][ ][ ] _weights;
         private float[ ] _biasWeights;
+        
+        private const float MIN_START_WEIGHT = -0.5f;
+        private const float MAX_START_WEIGHT = 0.5f;
 
         public float LearningSpeed;
         public float Moment;
@@ -34,14 +37,14 @@ namespace AnnEngine {
             for (uint i = 0; i < _weights.Length; i++) {
                 for (uint j = 0; j < _weights[i].Length; j++) {
                     for (uint k = 0; k < _weights[i][j].Length; k++) {
-                        _weights[i][j][k] = Utils.Random(-.5f, .5f);
+                        _weights[i][j][k] = Utils.Random(-MIN_START_WEIGHT, MAX_START_WEIGHT);
                     }
                 }
             }
             if (useBiasNeurons) {
                 _biasWeights = new float[hiddenNeurons.Length + 1];
                 for (uint i = 0; i < _biasWeights.Length; i++) {
-                    _biasWeights[i] = Utils.Random(-.5f, .5f);
+                    _biasWeights[i] = Utils.Random(-MIN_START_WEIGHT, MAX_START_WEIGHT);
                 }
             }
         }
