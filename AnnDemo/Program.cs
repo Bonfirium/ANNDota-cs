@@ -1,7 +1,7 @@
 ﻿using System;
 using AnnEngine;
 
-namespace AnnLogicalOperators {
+namespace AnnDemo {
     internal class Program {
         private static bool FunctionForLearning(bool x, bool y, bool z) => ((x & y) | (x & z) | y) & !(x & y & z);
         private const uint VARIABLES = 8;
