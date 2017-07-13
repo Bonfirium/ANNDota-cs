@@ -30,21 +30,26 @@ namespace AnnLogicalOperators {
             }
             Console.WriteLine("\n");
 
-            Ann ann = new Ann(3, new[ ] { 4u, 4u }, 1, 0.4f, 0.2f);
-            for (uint test = 0; test < 100000; test++) {
-                float maxError = 0f;
+            Utils.SetRandomSeed(2);
+
+            Ann ann = new Ann(3, new[ ] { 4u, 4u }, 1, 2.2f, 0.9f);
+            float maxError;
+            uint testNumber = 0;
+            do {
+                Console.Write(testNumber++ + ".\t");
+                maxError = 0f;
                 for (uint i = 0; i < VARIABLES; i++) {
                     AnnResult result = ann.Learn(new[ ] {
                         Utils.GetBit(i, 0).ToFloat( ),
                         Utils.GetBit(i, 1).ToFloat( ),
                         Utils.GetBit(i, 2).ToFloat( )
                     }, new[ ] { idealResultsFloat[i] });
-                    Console.Write("\t" + (result.Result[0]).ToString(".0000"));
+                    Console.Write("" + (result.Result[0]).ToString(".0000") + "\t");
                     maxError = Math.Max(maxError, result.Error);
                 }
                 Console.Write("\tERROR = " + (maxError * 100f).ToString("00.0000") + "%");
                 Console.WriteLine( );
-            }
+            } while (maxError > 0.01f);
 
 #if DEBUG
             Console.Write("Press any key to close program");
