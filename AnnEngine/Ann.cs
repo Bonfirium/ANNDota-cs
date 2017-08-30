@@ -90,7 +90,7 @@ namespace AnnEngine {
                         ActivationFunction(_neurons[currentLevel][currentNeuron].Value);
                 }
             }
-            uint outputLevelIndex = (uint) _neurons.Length - 1;
+            uint outputLevelIndex = (uint)_neurons.Length - 1;
             float[ ] result = new float[_neurons[outputLevelIndex].Length];
             for (uint i = 0; i < result.Length; i++) {
                 result[i] = _neurons[outputLevelIndex][i].Value;
@@ -98,21 +98,20 @@ namespace AnnEngine {
             return result;
         }
 
-        public AnnResult Learn(float[ ] input, float[ ]idealResult) {
-            // TODO: throw input.Length != input neurons count || idealResult.Length != output neurons count
-            float[ ] result = Run(input);
-            // Calculation the error
+        private AnnResult LearnByResult(float[ ] result, float[ ] idealResult) {
+            #region Calculation the error
             float error = 0;
             for (uint i = 0; i < result.Length; i++) {
-                error += (float) Math.Pow(idealResult[i] - result[i], 2);
+                error += (float)Math.Pow(idealResult[i] - result[i], 2);
             }
             error /= result.Length;
-            for (uint i = 0, outputLevelIndex = (uint) _neurons.Length - 1;
+            #endregion
+            for (uint i = 0, outputLevelIndex = (uint)_neurons.Length - 1;
                 i < _neurons[outputLevelIndex].Length;
                 i++) {
                 _neurons[outputLevelIndex][i].Delta = (idealResult[i] - result[i]) * LearningFunction(result[i]);
             }
-            for (uint i = (uint) _neurons.Length - 2, iInc = i + 1; i > 0; i--, iInc--) {
+            for (uint i = (uint)_neurons.Length - 2, iInc = i + 1; i > 0; i--, iInc--) {
                 for (uint j = 0; j < _neurons[i].Length; j++) {
                     _neurons[i][j].Delta = 0;
                     for (uint k = 0; k < _neurons[iInc].Length; k++) {
@@ -142,7 +141,22 @@ namespace AnnEngine {
             return new AnnResult(result, error);
         }
 
-        public static float Sigmoid(float x) => (float) (1f / (1f + Math.Exp(-x)));
+        public AnnResult Learn(float[ ] input, IDictionary<uint, float> idealResult) {
+            float[ ] result = Run(input);
+            float[ ] idealResultArray = new float[result.Length];
+            for (uint i = 0; i < result.Length; i++) {
+                idealResultArray[i] = idealResult.ContainsKey(i) ? idealResult[i] : result[i];
+            }
+            return LearnByResult(result, idealResultArray);
+        }
+
+        public AnnResult Learn(float[ ] input, float[ ] idealResult) {
+            // TODO: throw input.Length != input neurons count || idealResult.Length != output neurons count
+            float[ ] result = Run(input);
+            return LearnByResult(result, idealResult);
+        }
+
+        public static float Sigmoid(float x) => (float)(1f / (1f + Math.Exp(-x)));
         public static float SigmoidDerivativeSimplified(float x) => (1 - x) * x;
     }
 }
