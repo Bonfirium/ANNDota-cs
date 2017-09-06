@@ -5,6 +5,8 @@ namespace AnnDemo {
     internal class Program {
         private static bool FunctionForLearning(bool x, bool y, bool z) => ((x & y) | (x & z) | y) & !(x & y & z);
         private const uint VARIABLES = 8;
+        private const uint INTERVAL_OF_NULL_RESULT = 1000u;
+        private const float NULL_RESULT_SIZE = 0.0001f;
 
         public static void Main(string[ ] args) {
             bool[ ] idealResults = new bool[VARIABLES];
@@ -30,13 +32,18 @@ namespace AnnDemo {
             }
             Console.WriteLine("\n");
 
-            Utils.SetRandomSeed(2);
+            Utils.Randomize( );
+            //Utils.SetRandomSeed(100);
 
-            Ann ann = new Ann(3, new[ ] { 4u, 4u }, 1, 2.2f, 0.9f);
+            Ann ann = new Ann(3, new[ ] { 6u, 3u }, 1, 0.8f, 0.4f);
             float maxError;
-            uint testNumber = 0;
+            float maxErrorAtPreviousStep = 1f;
+            uint previousStepIndex = 0u;
+            bool previousStepIsSetted = false;
+            uint testNumber = 0u;
             do {
-                Console.Write(testNumber++ + ".\t");
+                testNumber++;
+                string output = testNumber.ToString( ) + ".\t";
                 maxError = 0f;
                 for (uint i = 0; i < VARIABLES; i++) {
                     AnnResult result = ann.Learn(new[ ] {
@@ -44,11 +51,26 @@ namespace AnnDemo {
                         Utils.GetBit(i, 1).ToFloat( ),
                         Utils.GetBit(i, 2).ToFloat( )
                     }, new[ ] { idealResultsFloat[i] });
-                    Console.Write("" + (result.Result[0]).ToString(".0000") + "\t");
+                    output += (result.Result[0]).ToString(".0000") + "\t";
                     maxError = Math.Max(maxError, result.Error);
                 }
-                Console.Write("\tERROR = " + (maxError * 100f).ToString("00.0000") + "%");
-                Console.WriteLine( );
+                if (!previousStepIsSetted) {
+                    previousStepIndex = testNumber;
+                    maxErrorAtPreviousStep = maxError;
+                } else if (testNumber - previousStepIndex == INTERVAL_OF_NULL_RESULT) {
+                    if (Math.Abs(maxError - maxErrorAtPreviousStep) < NULL_RESULT_SIZE) {
+                        Console.WriteLine(output);
+                        Console.WriteLine("Not learned ANN. Please, change the start weights!");
+                        break;
+                    } else {
+                        previousStepIndex = testNumber;
+                        maxErrorAtPreviousStep = maxError;
+                    }
+                }
+                output += "\tERROR = " + (maxError * 100f).ToString("00.0000") + "%";
+                if (testNumber % 100 == 0 || maxError <= 0.01f) {
+                    Console.WriteLine(output);
+                }
             } while (maxError > 0.01f);
 
 #if DEBUG

@@ -22,8 +22,7 @@ namespace AnnEngine {
         public readonly bool HasBiasNeurons;
 
         public Ann(uint inputNeurons, uint[ ] hiddenNeurons, uint outputNeurons, float learningSpeed,
-            float moment, Func<float, float> activationFunction = null, Func<float, float> learningFunction = null, bool
-                useBiasNeurons = true) {
+            float moment, Func<float, float> activationFunction = null, Func<float, float> learningFunction = null, bool useBiasNeurons = true) {
             LearningSpeed = learningSpeed;
             Moment = moment;
             ActivationFunction = activationFunction ?? Sigmoid;
