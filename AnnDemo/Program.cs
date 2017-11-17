@@ -3,6 +3,10 @@ using AnnEngine;
 
 namespace AnnDemo {
     internal class Program {
+        private const uint DIMENTIONS_COUNT = 3;
+
+        private static float[ ] _idealResults;
+
         private static bool FunctionForLearning(bool x, bool y, bool z) => ((x & y) | (x & z) | y) & !(x & y & z);
         private const uint VARIABLES = 8;
         private const uint INTERVAL_OF_NULL_RESULT = 1000u;
