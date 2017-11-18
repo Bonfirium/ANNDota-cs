@@ -18,8 +18,10 @@ namespace AnnDota {
         // 3546377857
 
         static void Main(string[ ] args) {
+            //string learningProgress = "";
+            //string testingProgress = "";
             string[ ] files = Directory.GetFiles(PATH_TO_DATASET);
-            //Ann ann = new Ann(230, new uint[ ] { 118, 128, 64, 32, 16, 8, 4, 2 }, 1, 1.6f, 0.8f);
+            //Ann ann = new Ann(230, new uint[ ] { 118, 128, 64, 32, 16, 8, 4, 2 }, 1, 0.7f, 0.3f);
             Ann ann = new Ann(230, new uint[ ] { 230 }, 1, 0.7f, 0.3f);
             uint testNumber = 0u;
             uint iterLength = 1000u;
@@ -38,21 +40,32 @@ namespace AnnDota {
                         0.5f + (uint.Parse(lines[10]) == 0 ? 1 : -1 ) *
                         (float.Parse(lines[11].Replace('.', ',')) - 0.5f)
                     };
-                    AnnResult res = k < 2 ? ann.Learn(inputs, outputs) : ann.Run(inputs)
+                    AnnResult res;
+                    if (k < 2) {
+                        res = ann.Learn(inputs, outputs);
+                    } else {
+                        float[ ] answer = ann.Run(inputs);
+                        float error = Ann.GetError(answer, outputs);
+                        res = new AnnResult(answer, error);
+                    }
                     if (Math.Round(res.Result[0]) == Math.Round(outputs[0])) {
                         trues++;
                     }
                     testNumber++;
                     if (testNumber % iterLength == 0) {
                         iter++;
-                        Console.WriteLine("{0}000.   {1}%", String.Format("{0,3:0}", iter), ((float)trues / testNumber * 100.0).ToString((k == 0 ? "00.0" : "00.000")));
+                        float percents = (float)trues / testNumber * 100.0f;
+                        Console.WriteLine("{0}000.   {1}%", String.Format("{0,3:0}", iter),
+                            percents.ToString((k < 2 ? "00.00" : "00.0000")));
                         if (k == 0) {
                             trues = 0u;
                             testNumber = 0;
                         }
                     }
                 }
-                trues = 0;
+                if (k < 2) {
+                    trues = 0;
+                }
                 iter = 0;
                 testNumber = 0;
             }
