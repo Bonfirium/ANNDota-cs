@@ -54,5 +54,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AnnEngine\AnnEngine.csproj">
+      <Project>{1F27DF9C-792E-4C70-9890-73787052A521}</Project>
+      <Name>AnnEngine</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
