@@ -97,14 +97,17 @@ namespace AnnEngine {
             return result;
         }
 
-        private AnnResult LearnByResult(float[ ] result, float[ ] idealResult) {
-            #region Calculation the error
+        public static float GetError(float[ ] result, float[ ] idealResult) {
             float error = 0;
             for (uint i = 0; i < result.Length; i++) {
                 error += (float)Math.Pow(idealResult[i] - result[i], 2);
             }
             error /= result.Length;
-            #endregion
+            return error;
+        }
+
+        private AnnResult LearnByResult(float[ ] result, float[ ] idealResult) {
+            float error = GetError(result, idealResult);
             for (uint i = 0, outputLevelIndex = (uint)_neurons.Length - 1;
                 i < _neurons[outputLevelIndex].Length;
                 i++) {
